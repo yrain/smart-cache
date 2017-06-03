@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd"
+	>
+	
+	<description>Spring Cache</description>
+	
+	<!-- Redis -->
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxTotal" value="${redis.max.total:1024}"/>
+		<property name="minIdle" value="${redis.min.idle:256}"/>
+		<property name="maxIdle" value="${redis.max.idle:256}"/>
+		<property name="maxWaitMillis" value="${redis.max.wait.millis:3000}"/>
+		<property name="blockWhenExhausted" value="true"/>
+		<property name="minEvictableIdleTimeMillis" value="${redis.min.evictable.idle.time.millis:60000}"/>
+		<property name="softMinEvictableIdleTimeMillis" value="-1"/>
+		<property name="timeBetweenEvictionRunsMillis" value="${redis.time.between.eviction.runs.millis:30000}"/>
+		<property name="numTestsPerEvictionRun" value="${redis.num.tests.per.eviction.run:128}"/>
+		<property name="testOnBorrow" value="${redis.test.on.borrow:true}"/>
+		<property name="testWhileIdle" value="${redis.test.while.idle:false}"/>
+		<property name="testOnReturn" value="${redis.test.on.return:false}"/>
+	</bean>
+
+	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+		<constructor-arg name="poolConfig" ref="jedisPoolConfig" />
+		<constructor-arg name="host" 	   value="${redis.host}" />
+		<constructor-arg name="port" 	   value="${redis.port}" />
+	</bean>
+	
+	<bean id="jedisTemplate" class="com.smart.jedis.JedisTemplate">
+		<property name="jedisPool" ref="jedisPool" />
+	</bean>
+	
+	<!-- Smart Cache -->
+	<bean id="cacheTemplate" class="com.smart.cache.CacheTemplate" destroy-method="shutdown">
+		<property name="jedisTemplate" ref="jedisTemplate" />
+	</bean>
+	
+	<!-- Spring Cache -->
+	<cache:annotation-driven cache-manager="cacheManager" proxy-target-class="true"/>
+	
+	<bean id="cacheManager" class="com.smart.cache.spring.CacheManager">
+		<property name="cacheTemplate" ref="cacheTemplate" />
+	</bean>
+		
+	<!-- Autoload -->
+	<bean id="autoLoadConfig" class="com.jarvis.cache.to.AutoLoadConfig">
+		<property name="threadCnt" value="10" />
+		<property name="maxElement" value="20000" />
+		<property name="printSlowLog" value="true" />
+		<property name="slowLoadTime" value="10000" />
+		<property name="sortType" value="1" />
+		<property name="checkFromCacheBeforeLoad" value="true" />
+		<property name="autoLoadPeriod" value="50" />
+		<property name="functions">
+			<map>
+				<entry key="isEmpty" value="com.jarvis.cache.CacheUtil" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="scriptParser" class="com.jarvis.cache.script.SpringELParser" />
+	
+	<bean id="cacheSerializer" class="com.smart.cache.autoload.serializer.FSTSerializer" />
+	
+	<bean id="cacheTemplateManager" class="com.smart.cache.autoload.CacheManager" destroy-method="destroy">
+		<constructor-arg ref="autoLoadConfig" />
+		<constructor-arg ref="cacheSerializer" />
+		<constructor-arg ref="scriptParser" />
+		<constructor-arg ref="cacheTemplate" />
+	</bean>
+	
+	<bean id="cacheInterceptor" class="com.jarvis.cache.aop.aspectj.AspectjAopInterceptor">
+		<property name="cacheManager" ref="cacheTemplateManager" />
+	</bean>
+	
+	<aop:config proxy-target-class="false" expose-proxy="true">
+		<aop:aspect ref="cacheInterceptor">
+			<aop:pointcut id="daoCachePointcut" expression="execution(public !void com.smart.showcase..*Dao.*(..)) &amp;&amp; @annotation(cache)" />
+			<aop:around pointcut-ref="daoCachePointcut" method="proceed" />
+		</aop:aspect>
+		<aop:aspect ref="cacheInterceptor" order="1000">
+			<aop:pointcut id="deleteCachePointcut" expression="execution(* com.smart.showcase..*Dao.*(..)) &amp;&amp; @annotation(cacheDelete)" />
+			<aop:after-returning pointcut-ref="deleteCachePointcut" method="deleteCache" returning="retVal" />
+		</aop:aspect>
+	</aop:config>
+	
+</beans>

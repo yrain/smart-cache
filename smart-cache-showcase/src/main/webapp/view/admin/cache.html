@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>CacheManager</title>
+		<link rel="stylesheet" href="../../static/lib/element-ui/element-ui.css">
+		<link rel="stylesheet" href="../../static/lib/json-formatter/json-formatter.css">
+		<link rel="stylesheet" href="../../static/css/admin/cache.css">
+		<script>
+			function compatibleGridLayout() {
+				let
+				element = document.createElement('div');
+				try {
+					if ('display' in element.style) {
+						element.style['display'] = 'grid';
+						return element.style['display'] === 'grid';
+					} else {
+						return false;
+					}
+				} catch (e) {
+					return false
+				}
+			}
+
+			if (!compatibleGridLayout()) {
+				// 使用了 grid 布局
+				alert('请使用最新版本的浏览器');
+			}
+		</script>
+	</head>
+	<body>
+		<div id="app">
+			<header>
+				Cache Manager
+			</header>
+			<nav>
+				<div class="toolbar">
+					<el-input
+					icon="search"
+					v-model="namesFilter">
+						<el-button size="small" slot="append" @click="refreshNames" :loading="namesLoading">
+							Reload
+						</el-button>
+					</el-input>
+				</div>
+				<div class="menu" v-loading="namesLoading">
+					<el-menu mode="vertical" @select="handleSelect">
+						<el-tooltip v-for="item in filteredNames" effect="light" :content="item" placement="right">
+							<el-menu-item :index="item">
+								<div style="width: 280px; overflow: hidden; display: inline-block;">
+									{{item}}
+								</div>
+								<div style="float: right; width: 66px; text-align: center;">
+									<el-button type="text" @click="handleDeleteAll(item)">
+										remove
+									</el-button>
+								</div>
+							</el-menu-item>
+						</el-tooltip>
+					</el-menu>
+				</div>
+			</nav>
+			<main id="main" v-loading="keysLoading">
+				<el-form inline class="toolbar">
+					<el-form-item>
+						<el-input
+						v-model="keysFilter">
+						</el-input>
+					</el-form-item>
+					<el-form-item>
+						<el-button @click="refreshKeys" :loading="keysLoading">
+							Reload
+						</el-button>
+					</el-form-item>
+				</el-form>
+				<el-table
+				:data="filteredKeys"
+				style="width: 100%"
+				border
+				empty-text="Empty..."
+				:height="height">
+					<el-table-column
+					label="Key"
+					resizable
+					prop="name">
+					</el-table-column>
+					<el-table-column
+					width="320"
+					label="Action">
+						<template scope="scope">
+							<el-button
+							type="text"
+							@click="handleFetch(scope.row)">
+								fetch
+							</el-button>
+							<el-button
+							type="text"
+							@click="handleGet(scope.row)">
+								remote
+							</el-button>
+							<el-button
+							type="text"
+							@click="handleDelete(scope.row)">
+								delete
+							</el-button>
+						</template>
+					</el-table-column>
+				</el-table>
+			</main>
+			<el-dialog :title="title" :visible.sync="dialogFormVisible" @open="onOpen">
+				<p id="content">
+				</p>
+				<div slot="footer" class="dialog-footer">
+					<el-button type="primary" @click="dialogFormVisible = false">
+						OK
+					</el-button>
+				</div>
+			</el-dialog>
+		</div>
+		<script src="../../static/lib/vue/vue.min.js"></script>
+		<script src="../../static/lib/element-ui/element-ui.js"></script>
+		<script src="../../static/lib/json-formatter/json-formatter.js"></script>
+		<script src="../../static/js/admin/cache.js"></script>
+	</body>
+</html>

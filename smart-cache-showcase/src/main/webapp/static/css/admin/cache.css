@@ -1,0 +1,70 @@
+:root {
+    box-sizing: border-box;
+}
+
+html, body {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#app {
+    display: grid;
+    height: 100%;
+    grid-template-columns: 400px 1fr;
+    grid-template-rows: 64px 1fr;
+    background-color: #e5e9f2;
+}
+
+#app > header {
+    grid-column: 1/3;
+    background-color: #20a0ff;
+    line-height: 64px;
+    color: #fff;
+    font-size: x-large;
+    font-weight: bold;
+    padding: 0 30px;
+}
+
+#app > nav {
+    overflow: auto;
+    background-color: #eef1f6;
+    display: grid;
+    grid-template-rows: 56px 1fr;
+}
+
+#app > nav > .menu {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#app > main {
+    margin-left: 16px;
+    background-color: #fff;
+    overflow: auto;
+}
+
+.toolbar {
+    padding: 10px 20px;
+}
+
+.toolbar .el-form-item {
+    margin-bottom: 0;
+}
+
+.search-menu {
+    cursor: auto;
+}
+
+.search-menu:hover {
+    background-color: inherit;
+}
+
+#content {
+    max-height: 470px;
+    overflow: auto;
+}
+.json-formatter-row .json-formatter-string {
+    white-space: normal;
+}

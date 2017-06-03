@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>AutoLoad Demo</title>
+        <link rel="stylesheet" href="../../static/css/autoload/user.css">
+    </head>
+    <body>
+        <div class="container">
+            <h3>AutoLoad Simple Demo</h3>
+            <hr>
+            <p class="toolbar">
+                <button class="button" @click="create">添加</button>
+                <button class="button" @click="refresh">查询</button>
+            </p>
+            <div class="table-container" :class="{loading: loading}">
+                <table width="100%" border="1">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th width="200">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="user in users">
+                        <td>{{user.id}}</td>
+                        <td>{{user.name}}</td>
+                        <td>
+                            <button class="button" @click="get(user.id)">查看</button>
+                            <button class="button" @click="del(user.id)">删除</button>
+                        </td>
+                    </tr>
+                    <tr v-if="users.length==0">
+                        <td colspan="3" align="center">
+                            暂无数据!
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="modal">
+                    <span>Loading...</span>
+                </div>
+            </div>
+        </div>
+        <script src="../../static/lib/vue/vue.min.js"></script>
+        <script src="../../static/js/autoload/user.js"></script>
+    </body>
+</html>

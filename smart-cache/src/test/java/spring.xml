@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd"
+	>
+	
+	<description>Spring</description>
+	
+	<context:property-placeholder location="classpath*:/config.properties" />
+	
+	<context:component-scan base-package="com.smart.showcase" />
+	
+	<!-- Serializer -->
+	<bean id="stringSerializer" class="com.smart.serializer.StringSerializer" />
+	<bean id="fstSerializer" class="com.smart.serializer.FSTSerializer" />
+	<bean id="fastjsonSerializer" class="com.smart.serializer.FastjsonSerializer" />
+
+	<!-- Redis -->
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxTotal" value="${redis.max.total:1024}"/>
+		<property name="minIdle" value="${redis.min.idle:256}"/>
+		<property name="maxIdle" value="${redis.max.idle:256}"/>
+		<property name="maxWaitMillis" value="${redis.max.wait.millis:3000}"/>
+		<property name="blockWhenExhausted" value="true"/>
+		<property name="minEvictableIdleTimeMillis" value="${redis.min.evictable.idle.time.millis:60000}"/>
+		<property name="softMinEvictableIdleTimeMillis" value="-1"/>
+		<property name="timeBetweenEvictionRunsMillis" value="${redis.time.between.eviction.runs.millis:30000}"/>
+		<property name="numTestsPerEvictionRun" value="${redis.num.tests.per.eviction.run:128}"/>
+		<property name="testOnBorrow" value="${redis.test.on.borrow:true}"/>
+		<property name="testWhileIdle" value="${redis.test.while.idle:false}"/>
+		<property name="testOnReturn" value="${redis.test.on.return:false}"/>
+	</bean>
+	
+	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+		<constructor-arg name="poolConfig" ref="jedisPoolConfig" />
+		<constructor-arg name="host" 	   value="${redis.host}" />
+		<constructor-arg name="port" 	   value="${redis.port}" />
+	</bean>
+	
+	<bean id="jedisTemplate" class="com.smart.jedis.JedisTemplate">
+		<property name="jedisPool" ref="jedisPool" />
+		<property name="keySerializer" ref="stringSerializer" /><!-- key默认使用string序列化 -->
+		<property name="valSerializer" ref="fstSerializer" /><!-- val默认使用fst序列化 -->
+	</bean>
+	
+	<!-- Smart Cache -->
+	<bean id="cacheTemplate" class="com.smart.cache.CacheTemplate" destroy-method="shutdown">
+		<property name="key" value="smart" /><!-- Redis前缀 -->
+		<property name="spliter" value=":" /><!-- Redis分隔符 -->
+		<property name="localEnabled" value="true" /><!-- 是否启用本地缓存  -->
+		<property name="setCmdEnabled" value="false" /><!-- 是否启用set通知  -->
+		<property name="localStoreLocation" value="/cache/" /><!-- 本地缓存存储磁盘位置  -->
+		<property name="localMaxBytesLocalHeap" value="128M" /><!-- 本地缓存最大内存大小 -->
+		<property name="localMaxBytesLocalDisk" value="1024M" /><!-- 本地缓存最大磁盘大小  -->
+		<property name="localTimeToIdleSeconds" value="1800" /><!-- 本地缓存15分钟过期  -->
+		<property name="localDiskExpiryThreadIntervalSeconds" value="180" /><!-- 本地缓存3分钟清理一次  -->
+		<property name="fetchTimeoutSeconds" value="5" /><!-- fetch命令最长等待5秒  -->
+		<property name="jedisTemplate" ref="jedisTemplate" /><!-- jedis操作类  -->
+	</bean>
+	
+</beans>
