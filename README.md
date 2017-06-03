@@ -181,6 +181,49 @@ cacheTemplate.values(name);// 获取name下缓存值
 
 见:smart-cache/src/test/java/spring.xml
 
+
+## Redis集群配置
+
+```xml
+<bean id="jedisCluster" class="redis.clients.jedis.JedisCluster">  
+	<constructor-arg index="0">  
+		<set>  
+			<bean class="redis.clients.jedis.HostAndPort">  
+				<constructor-arg index="0" value="192.168.1.157" />  
+				<constructor-arg index="1" value="3001" type="int" />  
+			</bean>  
+			<bean class="redis.clients.jedis.HostAndPort">  
+				<constructor-arg index="0" value="192.168.1.157" />  
+				<constructor-arg index="1" value="3002" type="int" />  
+			</bean>  
+			<bean class="redis.clients.jedis.HostAndPort">  
+				<constructor-arg index="0" value="192.168.1.157" />  
+				<constructor-arg index="1" value="3003" type="int" />  
+			</bean>
+			<bean class="redis.clients.jedis.HostAndPort">  
+				<constructor-arg index="0" value="192.168.1.157" />  
+				<constructor-arg index="1" value="3004" type="int" />  
+			</bean>
+			<bean class="redis.clients.jedis.HostAndPort">  
+				<constructor-arg index="0" value="192.168.1.157" />  
+				<constructor-arg index="1" value="3005" type="int" />  
+			</bean>
+			<bean class="redis.clients.jedis.HostAndPort">  
+				<constructor-arg index="0" value="192.168.1.157" />  
+				<constructor-arg index="1" value="3006" type="int" />  
+			</bean>
+		</set>  
+	</constructor-arg>  
+	<constructor-arg index="1" value="2000" type="int"></constructor-arg>
+	<constructor-arg index="2" value="100" type="int"></constructor-arg>
+	<constructor-arg index="3" ref="jedisPoolConfig"></constructor-arg>
+</bean>
+	
+<bean id="jedisTemplate" class="com.smart.jedis.JedisTemplate">
+	<property name="jedisCluster" ref="jedisCluster"/>
+</bean>
+```
+
 ## 建议咨询
 QQ:20365124
 email:yrain@live.cn
