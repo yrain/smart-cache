@@ -64,7 +64,7 @@ cacheTemplate.keys(name);			 // 获取name下所有key
 cacheTemplate.size(name);			 // 获取name下缓存数量
 cacheTemplate.values(name);			 // 获取name下缓存值
 ```
-见::smart-cache/src/test/java/com/smart/cache/App.java
+见:smart-cache/src/test/java/com/smart/cache/App.java
 
 ## 与Spring Cache联用
 spring.xml
@@ -76,8 +76,9 @@ spring.xml
 	</bean>
 ```
 
-## 与[AutoLoadCache](https://github.com/qiujiayu/AutoLoadCache)联用(推荐) 
-pom.xml
+## 与[AutoLoadCache](https://github.com/qiujiayu/AutoLoadCache)联用
+- pom.xml
+
 ```xml
 	<dependency>
 		<groupId>com.smart</groupId>
@@ -85,7 +86,8 @@ pom.xml
 		<version>0.23</version>
 	</dependency>
 ```
-spring.xml
+- spring.xml
+
 ```xml
 	<bean id="cacheTemplateManager" class="com.smart.cache.autoload.CacheManager" destroy-method="destroy">
 		<constructor-arg ref="autoLoadConfig" />
@@ -99,20 +101,20 @@ spring.xml
 
 ## 项目演示:smart-cache-showcase
 
-管理页面:http://localhost:8080/view/admin/cache.html
-演示页面:http://localhost:8080/view/autoload/user.html
-访问链接:
-AutoLoadCache
+- 管理页面:http://localhost:8080/view/admin/cache.html
+- 演示页面:http://localhost:8080/view/autoload/user.html
+- 访问链接:
+- AutoLoadCache
  - 查询缓存:http://localhost:8080/showcase/autoload/user/find
  - 添加数据:http://localhost:8080/showcase/autoload/user/create
-Spring Cache
+- Spring Cache
  - 查询缓存:http://localhost:8080/showcase/springcache/user/find
  - 添加数据:http://localhost:8080/showcase/springcache/user/create
 
 注意:
-2.若修改了序列化方式,务必清空Redis上原缓存数据
+若修改了序列化方式,务必清空Redis上原缓存数据
 
-## 管理页面截图
+## 页面截图
 
 
 
@@ -161,6 +163,7 @@ Spring Cache
 
 ```
 见smart-cache/src/test/java/spring.xml
+
 ## 建议咨询
 QQ:20365124
 email:yrain@live.cn
