@@ -51,18 +51,18 @@
 - 代码示例
 
 ```java
-cacheTemplate.set(name, key, value); // 设置
-cacheTemplate.get(name, key);		 // 获取
-cacheTemplate.del(name, key);		 // 删除
-cacheTemplate.rem(name);			 // 删除name下所有缓存
-cacheTemplate.cls();				 // 清空所有缓存
-cacheTemplate.fetch(name, key);      // 抓取集群下所有单机一级缓存
-cacheTemplate.ttl(name, key);		 // 获取缓存ttl
-cacheTemplate.tti(name, key);		 // 获取缓存tti
-cacheTemplate.names();				 // 获取所有缓存name
-cacheTemplate.keys(name);			 // 获取name下所有key
-cacheTemplate.size(name);			 // 获取name下缓存数量
-cacheTemplate.values(name);			 // 获取name下缓存值
+cacheTemplate.set(name, key, value);// 设置
+cacheTemplate.get(name, key);// 获取
+cacheTemplate.del(name, key);// 删除
+cacheTemplate.rem(name);// 删除name下所有缓存
+cacheTemplate.cls();// 清空所有缓存
+cacheTemplate.fetch(name, key);// 抓取集群下所有单机一级缓存
+cacheTemplate.ttl(name, key);// 获取缓存ttl
+cacheTemplate.tti(name, key);// 获取缓存tti
+cacheTemplate.names();// 获取所有缓存name
+cacheTemplate.keys(name);// 获取name下所有key
+cacheTemplate.size(name);// 获取name下缓存数量
+cacheTemplate.values(name);// 获取name下缓存值
 ```
 见:smart-cache/src/test/java/com/smart/cache/App.java
 
