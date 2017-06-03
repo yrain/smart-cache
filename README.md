@@ -13,9 +13,16 @@
 - 类似Jedis的API,使用简便.
 - 尽可能减少配置和封装,力求精简,够用即可.
 
+开源地址:
+[github](https://github.com/yrain/smart-cache)
+[oschina](http://git.oschina.net/yrain/smart-cache)
+
+
+
 
 ## 使用方式
 - pom.xml
+
 ```xml
 <dependency>
 	<groupId>com.smart</groupId>
@@ -23,7 +30,9 @@
 	<version>0.23</version>
 </dependency>
 ```
+
 - spring.xml
+
 ```xml
 <!-- Redis -->
 <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
@@ -65,10 +74,13 @@ cacheTemplate.keys(name);// 获取name下所有key
 cacheTemplate.size(name);// 获取name下缓存数量
 cacheTemplate.values(name);// 获取name下缓存值
 ```
+
 见:smart-cache/src/test/java/com/smart/cache/App.java
 
 ## 与Spring Cache联用
+
 - spring.xml
+
 ```xml
 <cache:annotation-driven cache-manager="cacheManager" proxy-target-class="true"/>
 
@@ -78,6 +90,7 @@ cacheTemplate.values(name);// 获取name下缓存值
 ```
 
 ## 与[AutoLoadCache](https://github.com/qiujiayu/AutoLoadCache)联用
+
 - pom.xml
 
 ```xml
@@ -87,6 +100,7 @@ cacheTemplate.values(name);// 获取name下缓存值
 	<version>0.23</version>
 </dependency>
 ```
+
 - spring.xml
 
 ```xml
@@ -164,6 +178,7 @@ cacheTemplate.values(name);// 获取name下缓存值
 	<property name="jedisTemplate" ref="jedisTemplate" /><!-- jedis操作类  -->
 </bean>
 ```
+
 见:smart-cache/src/test/java/spring.xml
 
 ## 建议咨询
