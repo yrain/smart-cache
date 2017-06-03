@@ -16,36 +16,36 @@
 ## 使用方式
 - pom.xml
 ```xml
-	<dependency>
-		<groupId>com.smart</groupId>
-		<artifactId>smart-cache</artifactId>
-		<version>0.23</version>
-	</dependency>
+<dependency>
+	<groupId>com.smart</groupId>
+	<artifactId>smart-cache</artifactId>
+	<version>0.23</version>
+</dependency>
 ```
 - spring.xml
 ```xml
-	<!-- Redis -->
-	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
-		<property name="maxTotal" value="${redis.max.total:1024}"/>
-		<property name="minIdle" value="${redis.min.idle:256}"/>
-		<property name="maxIdle" value="${redis.max.idle:256}"/>
-		<property name="maxWaitMillis" value="${redis.max.wait.millis:3000}"/>
-	</bean>
-	
-	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
-		<constructor-arg name="poolConfig" ref="jedisPoolConfig" />
-		<constructor-arg name="host" 	   value="${redis.host}" />
-		<constructor-arg name="port" 	   value="${redis.port}" />
-	</bean>
-	
-	<bean id="jedisTemplate" class="com.smart.jedis.JedisTemplate">
-		<property name="jedisPool" ref="jedisPool" />
-	</bean>
+<!-- Redis -->
+<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+	<property name="maxTotal" value="${redis.max.total:1024}"/>
+	<property name="minIdle" value="${redis.min.idle:256}"/>
+	<property name="maxIdle" value="${redis.max.idle:256}"/>
+	<property name="maxWaitMillis" value="${redis.max.wait.millis:3000}"/>
+</bean>
 
-	<!-- Smart Cache -->
-	<bean id="cacheTemplate" class="com.smart.cache.CacheTemplate" destroy-method="shutdown">
-		<property name="jedisTemplate" ref="jedisTemplate" />
-	</bean>
+<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+	<constructor-arg name="poolConfig" ref="jedisPoolConfig" />
+	<constructor-arg name="host" 	   value="${redis.host}" />
+	<constructor-arg name="port" 	   value="${redis.port}" />
+</bean>
+
+<bean id="jedisTemplate" class="com.smart.jedis.JedisTemplate">
+	<property name="jedisPool" ref="jedisPool" />
+</bean>
+
+<!-- Smart Cache -->
+<bean id="cacheTemplate" class="com.smart.cache.CacheTemplate" destroy-method="shutdown">
+	<property name="jedisTemplate" ref="jedisTemplate" />
+</bean>
 ```
 
 - 代码示例
@@ -69,32 +69,32 @@ cacheTemplate.values(name);			 // 获取name下缓存值
 ## 与Spring Cache联用
 spring.xml
 ```xml
-	<cache:annotation-driven cache-manager="cacheManager" proxy-target-class="true"/>
-	
-	<bean id="cacheManager" class="com.smart.cache.spring.CacheManager">
-		<property name="cacheTemplate" ref="cacheTemplate" />
-	</bean>
+<cache:annotation-driven cache-manager="cacheManager" proxy-target-class="true"/>
+
+<bean id="cacheManager" class="com.smart.cache.spring.CacheManager">
+	<property name="cacheTemplate" ref="cacheTemplate" />
+</bean>
 ```
 
 ## 与[AutoLoadCache](https://github.com/qiujiayu/AutoLoadCache)联用
 - pom.xml
 
 ```xml
-	<dependency>
-		<groupId>com.smart</groupId>
-		<artifactId>smart-cache-autoload</artifactId>
-		<version>0.23</version>
-	</dependency>
+<dependency>
+	<groupId>com.smart</groupId>
+	<artifactId>smart-cache-autoload</artifactId>
+	<version>0.23</version>
+</dependency>
 ```
 - spring.xml
 
 ```xml
-	<bean id="cacheTemplateManager" class="com.smart.cache.autoload.CacheManager" destroy-method="destroy">
-		<constructor-arg ref="autoLoadConfig" />
-		<constructor-arg ref="cacheSerializer" />
-		<constructor-arg ref="scriptParser" />
-		<constructor-arg ref="cacheTemplate" />
-	</bean>
+<bean id="cacheTemplateManager" class="com.smart.cache.autoload.CacheManager" destroy-method="destroy">
+	<constructor-arg ref="autoLoadConfig" />
+	<constructor-arg ref="cacheSerializer" />
+	<constructor-arg ref="scriptParser" />
+	<constructor-arg ref="cacheTemplate" />
+</bean>
 ```
 
 
@@ -121,46 +121,45 @@ spring.xml
 ## 完整配置
 
 ```xml
-	<!-- Serializer -->
-	<bean id="stringSerializer" class="com.smart.serializer.StringSerializer" />
-	<bean id="fstSerializer" class="com.smart.serializer.FSTSerializer" />
-	<bean id="fastjsonSerializer" class="com.smart.serializer.FastjsonSerializer" />
+<!-- Serializer -->
+<bean id="stringSerializer" class="com.smart.serializer.StringSerializer" />
+<bean id="fstSerializer" class="com.smart.serializer.FSTSerializer" />
+<bean id="fastjsonSerializer" class="com.smart.serializer.FastjsonSerializer" />
 
-	<!-- Redis -->
-	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
-		<property name="maxTotal" value="${redis.max.total:1024}"/>
-		<property name="minIdle" value="${redis.min.idle:256}"/>
-		<property name="maxIdle" value="${redis.max.idle:256}"/>
-		<property name="maxWaitMillis" value="${redis.max.wait.millis:3000}"/>
-	</bean>
-	
-	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
-		<constructor-arg name="poolConfig" ref="jedisPoolConfig" />
-		<constructor-arg name="host" 	   value="${redis.host}" />
-		<constructor-arg name="port" 	   value="${redis.port}" />
-	</bean>
-	
-	<bean id="jedisTemplate" class="com.smart.jedis.JedisTemplate">
-		<property name="jedisPool" ref="jedisPool" />
-		<property name="keySerializer" ref="stringSerializer" /><!-- key默认使用string序列化 -->
-		<property name="valSerializer" ref="fstSerializer" />   <!-- val默认使用fst序列化 -->
-	</bean>
+<!-- Redis -->
+<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+	<property name="maxTotal" value="${redis.max.total:1024}"/>
+	<property name="minIdle" value="${redis.min.idle:256}"/>
+	<property name="maxIdle" value="${redis.max.idle:256}"/>
+	<property name="maxWaitMillis" value="${redis.max.wait.millis:3000}"/>
+</bean>
 
-	<!-- Smart Cache -->
-	<bean id="cacheTemplate" class="com.smart.cache.CacheTemplate" destroy-method="shutdown">
-		<property name="key" value="smart" /><!-- Redis前缀 -->
-		<property name="spliter" value=":" /><!-- Redis分隔符 -->
-		<property name="localEnabled" value="true" /><!-- 是否启用本地缓存  -->
-		<property name="setCmdEnabled" value="false" /><!-- 是否启用set通知  -->
-		<property name="localStoreLocation" value="/cache/" /><!-- 本地缓存存储磁盘位置  -->
-		<property name="localMaxBytesLocalHeap" value="128M" /><!-- 本地缓存最大内存大小 -->
-		<property name="localMaxBytesLocalDisk" value="1024M" /><!-- 本地缓存最大磁盘大小  -->
-		<property name="localTimeToIdleSeconds" value="1800" /><!-- 本地缓存15分钟过期  -->
-		<property name="localDiskExpiryThreadIntervalSeconds" value="180" /><!-- 本地缓存3分钟清理一次  -->
-		<property name="fetchTimeoutSeconds" value="5" /><!-- fetch命令最长等待5秒  -->
-		<property name="jedisTemplate" ref="jedisTemplate" /><!-- jedis操作类  -->
-	</bean>
+<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+	<constructor-arg name="poolConfig" ref="jedisPoolConfig" />
+	<constructor-arg name="host" 	   value="${redis.host}" />
+	<constructor-arg name="port" 	   value="${redis.port}" />
+</bean>
 
+<bean id="jedisTemplate" class="com.smart.jedis.JedisTemplate">
+	<property name="jedisPool" ref="jedisPool" />
+	<property name="keySerializer" ref="stringSerializer" /><!-- key默认使用string序列化 -->
+	<property name="valSerializer" ref="fstSerializer" />   <!-- val默认使用fst序列化 -->
+</bean>
+
+<!-- Smart Cache -->
+<bean id="cacheTemplate" class="com.smart.cache.CacheTemplate" destroy-method="shutdown">
+	<property name="key" value="smart" /><!-- Redis前缀 -->
+	<property name="spliter" value=":" /><!-- Redis分隔符 -->
+	<property name="localEnabled" value="true" /><!-- 是否启用本地缓存  -->
+	<property name="setCmdEnabled" value="false" /><!-- 是否启用set通知  -->
+	<property name="localStoreLocation" value="/cache/" /><!-- 本地缓存存储磁盘位置  -->
+	<property name="localMaxBytesLocalHeap" value="128M" /><!-- 本地缓存最大内存大小 -->
+	<property name="localMaxBytesLocalDisk" value="1024M" /><!-- 本地缓存最大磁盘大小  -->
+	<property name="localTimeToIdleSeconds" value="1800" /><!-- 本地缓存15分钟过期  -->
+	<property name="localDiskExpiryThreadIntervalSeconds" value="180" /><!-- 本地缓存3分钟清理一次  -->
+	<property name="fetchTimeoutSeconds" value="5" /><!-- fetch命令最长等待5秒  -->
+	<property name="jedisTemplate" ref="jedisTemplate" /><!-- jedis操作类  -->
+</bean>
 ```
 见smart-cache/src/test/java/spring.xml
 
