@@ -100,15 +100,15 @@ cacheTemplate.values(name);// 获取name下缓存值
 
 
 ## 项目演示
-smart-cache-showcase
+### Showcase
 - 管理页面:http://localhost:8080/view/admin/cache.html
 - 演示页面:http://localhost:8080/view/autoload/user.html
 
-### AutoLoadCache
+### Showcase.AutoLoadCache
 - 查询缓存:http://localhost:8080/showcase/autoload/user/find
 - 添加数据:http://localhost:8080/showcase/autoload/user/create
 
-### Spring Cache
+### Showcase.Spring Cache
 - 查询缓存:http://localhost:8080/showcase/springcache/user/find
 - 添加数据:http://localhost:8080/showcase/springcache/user/create
 
