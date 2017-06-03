@@ -67,7 +67,7 @@ cacheTemplate.values(name);// 获取name下缓存值
 见:smart-cache/src/test/java/com/smart/cache/App.java
 
 ## 与Spring Cache联用
-spring.xml
+- spring.xml
 ```xml
 <cache:annotation-driven cache-manager="cacheManager" proxy-target-class="true"/>
 
@@ -99,24 +99,26 @@ spring.xml
 
 
 
-## 项目演示:smart-cache-showcase
-
+## 项目演示
+smart-cache-showcase
 - 管理页面:http://localhost:8080/view/admin/cache.html
 - 演示页面:http://localhost:8080/view/autoload/user.html
-- 访问链接:
-- AutoLoadCache
- - 查询缓存:http://localhost:8080/showcase/autoload/user/find
- - 添加数据:http://localhost:8080/showcase/autoload/user/create
-- Spring Cache
- - 查询缓存:http://localhost:8080/showcase/springcache/user/find
- - 添加数据:http://localhost:8080/showcase/springcache/user/create
+
+### AutoLoadCache
+- 查询缓存:http://localhost:8080/showcase/autoload/user/find
+- 添加数据:http://localhost:8080/showcase/autoload/user/create
+
+### Spring Cache
+- 查询缓存:http://localhost:8080/showcase/springcache/user/find
+- 添加数据:http://localhost:8080/showcase/springcache/user/create
 
 注意:
 若修改了序列化方式,务必清空Redis上原缓存数据
 
 ## 页面截图
+![CacheManager](./doc/cachemanager.png "CacheManager")
 
-
+![CacheManager.fetch](./doc/cachemanager.fetch.png "CacheManager.fetch")
 
 ## 完整配置
 
@@ -161,7 +163,7 @@ spring.xml
 	<property name="jedisTemplate" ref="jedisTemplate" /><!-- jedis操作类  -->
 </bean>
 ```
-见smart-cache/src/test/java/spring.xml
+见:smart-cache/src/test/java/spring.xml
 
 ## 建议咨询
 QQ:20365124
