@@ -9,7 +9,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.smart.redis.JedisTemplate;
+import com.smart.jedis.JedisTemplate;
 
 @Component
 public class UserData implements InitializingBean {

@@ -47,7 +47,7 @@
 		<constructor-arg name="port" 	   value="${redis.port}" />
 	</bean>
 	
-	<bean id="jedisTemplate" class="com.smart.redis.JedisTemplate">
+	<bean id="jedisTemplate" class="com.smart.jedis.JedisTemplate">
 		<property name="jedisPool" ref="jedisPool" />
 		<property name="keySerializer" ref="stringSerializer" /><!-- key默认使用string序列化 -->
 		<property name="valSerializer" ref="fstSerializer" /><!-- val默认使用fst序列化 -->

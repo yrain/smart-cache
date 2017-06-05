@@ -38,7 +38,7 @@
 		<constructor-arg name="port" 	   value="${redis.port}" />
 	</bean>
 	
-	<bean id="jedisTemplate" class="com.smart.redis.JedisTemplate">
+	<bean id="jedisTemplate" class="com.smart.jedis.JedisTemplate">
 		<property name="jedisPool" ref="jedisPool" />
 	</bean>
 	

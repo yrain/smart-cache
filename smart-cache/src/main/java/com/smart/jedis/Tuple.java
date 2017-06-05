@@ -1,4 +1,4 @@
-package com.smart.redis;
+package com.smart.jedis;
 
 public class Tuple {
 
