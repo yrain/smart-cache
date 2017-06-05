@@ -33,9 +33,10 @@ public class JedisTemplate implements InitializingBean {
     private JedisPool     jedisPool;
     private JedisOperator jedisOperator;
     private JedisCluster  jedisCluster;
-    private boolean       cluster = false;
+    private boolean       cluster          = false;
     private Serializer    keySerializer;
     private Serializer    valSerializer;
+    private Serializer    stringSerializer = new StringSerializer();
 
     public JedisTemplate() {
     }
@@ -58,7 +59,7 @@ public class JedisTemplate implements InitializingBean {
             }
         }
         if (null == keySerializer) {
-            this.keySerializer = new StringSerializer();
+            this.keySerializer = this.stringSerializer;
         }
         if (null == valSerializer) {
             this.valSerializer = new FSTSerializer();
@@ -111,6 +112,64 @@ public class JedisTemplate implements InitializingBean {
             return (E) deserializeVal(jedisCluster.get(serializeKey(key)));
         } else {
             return (E) deserializeVal(jedisOperator.get(serializeKey(key)));
+        }
+    }
+
+    /**
+     * 设值-integer
+     */
+    public boolean integer(Object key, Object value) {
+        if (null == key || null == value) {
+            return false;
+        }
+        if (cluster) {
+            return jedisCluster.set(stringSerializer.serialize(key), stringSerializer.serialize(value)).equals("OK");
+        } else {
+            return jedisOperator.set(stringSerializer.serialize(key), stringSerializer.serialize(value)).equals("OK");
+        }
+    }
+
+    /**
+     * 取值-integer
+     */
+    @SuppressWarnings("unchecked")
+    public <E> E integer(Object key) {
+        if (null == key) {
+            return null;
+        }
+        if (cluster) {
+            return (E) stringSerializer.deserialize(jedisCluster.get(stringSerializer.serialize(key)));
+        } else {
+            return (E) stringSerializer.deserialize(jedisOperator.get(stringSerializer.serialize(key)));
+        }
+    }
+
+    /**
+     * 设值-string
+     */
+    public boolean string(Object key, Object value) {
+        if (null == key || null == value) {
+            return false;
+        }
+        if (cluster) {
+            return jedisCluster.set(stringSerializer.serialize(key), stringSerializer.serialize(value)).equals("OK");
+        } else {
+            return jedisOperator.set(stringSerializer.serialize(key), stringSerializer.serialize(value)).equals("OK");
+        }
+    }
+
+    /**
+     * 取值-string
+     */
+    @SuppressWarnings("unchecked")
+    public <E> E string(Object key) {
+        if (null == key) {
+            return null;
+        }
+        if (cluster) {
+            return (E) stringSerializer.deserialize(jedisCluster.get(stringSerializer.serialize(key)));
+        } else {
+            return (E) stringSerializer.deserialize(jedisOperator.get(stringSerializer.serialize(key)));
         }
     }
 
