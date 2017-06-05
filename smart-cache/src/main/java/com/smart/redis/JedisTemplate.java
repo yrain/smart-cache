@@ -1,4 +1,4 @@
-package com.smart.jedis;
+package com.smart.redis;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -19,7 +19,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.smart.cache.Cache.Level;
 import com.smart.cache.Cache.Operator;
-import com.smart.jedis.JedisTemplate;
+import com.smart.redis.JedisTemplate;
 import com.smart.util.Dates;
 import com.smart.util.Objects;
 

@@ -48,7 +48,7 @@
 	<constructor-arg name="port" 	   value="${redis.port}" />
 </bean>
 
-<bean id="jedisTemplate" class="com.smart.jedis.JedisTemplate">
+<bean id="jedisTemplate" class="com.smart.redis.JedisTemplate">
 	<property name="jedisPool" ref="jedisPool" />
 </bean>
 
@@ -157,7 +157,7 @@ cacheTemplate.values(name);// 获取name下缓存值
 	<constructor-arg name="port" 	   value="${redis.port}" />
 </bean>
 
-<bean id="jedisTemplate" class="com.smart.jedis.JedisTemplate">
+<bean id="jedisTemplate" class="com.smart.redis.JedisTemplate">
 	<property name="jedisPool" ref="jedisPool" />
 	<property name="keySerializer" ref="stringSerializer" /><!-- key默认使用string序列化 -->
 	<property name="valSerializer" ref="fstSerializer" />   <!-- val默认使用fst序列化 -->
@@ -219,7 +219,7 @@ cacheTemplate.values(name);// 获取name下缓存值
 	<constructor-arg index="3" ref="jedisPoolConfig"></constructor-arg>
 </bean>
 	
-<bean id="jedisTemplate" class="com.smart.jedis.JedisTemplate">
+<bean id="jedisTemplate" class="com.smart.redis.JedisTemplate">
 	<property name="jedisCluster" ref="jedisCluster"/>
 </bean>
 ```

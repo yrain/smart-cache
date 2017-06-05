@@ -3,7 +3,7 @@ package com.smart.cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.smart.jedis.JedisTemplate;
+import com.smart.redis.JedisTemplate;
 
 import redis.clients.jedis.BinaryJedisPubSub;
 import redis.clients.jedis.JedisPubSub;

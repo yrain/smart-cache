@@ -1,4 +1,4 @@
-package com.smart.jedis;
+package com.smart.redis;
 
 import redis.clients.jedis.Jedis;
 
