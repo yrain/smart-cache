@@ -37,7 +37,7 @@
 		</dependency>
 		<!-- for autoload -->
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>com.smart</groupId>
 			<artifactId>smart-cache-autoload</artifactId>
 			<version>${project.version}</version>
 		</dependency>
