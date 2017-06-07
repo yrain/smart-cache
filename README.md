@@ -1,5 +1,19 @@
 # smart-cache
 
+## Introduce
+
+Java distributed second-level cache, which is achieved based on Ehcache and Redis, can realize cache monitoring and fetching of multi-computer cluster at all levels besides basic operations.
+
+- Synchronize the stand-alone cache to the Redis caching-system in a specific structure to achieve  
+ the unified management of the global cache.
+- Establish CacheManager and StoreLocation with codes dynamically to get rid of annoying ehcache.xml configuration files and prevent the cache from becoming out of sync when the service needs to be restarted or stop working. 
+- Replace the native hash type of Redis with the self-maintained hash data structure to make the expiration time of each cache element controllable.
+- Adopt Redis.Topic mechanism to realize cache synchronization.
+- Provide cache management monitoring pages.
+- Implement the fetching function of multi-machine local cache.
+- Realize easy operation for its similarity to the API of Jedis.
+- Minimize the configuration and packaging, striving to be streamlined.
+
 ## 项目介绍
 
 基于Ehcache和Redis实现的Java分布式二级缓存.除基本操作以外实现多机集群时各级缓存的监管和抓取.
