@@ -2,7 +2,7 @@
 
 ## Introduce
 
-Java distributed second-level cache, which is achieved based on Ehcache and Redis, can realize cache monitoring and fetching of multi-computer cluster at all levels besides basic operations.
+Java distributed second-level cache, which is achieved based on Ehcache2 and Redis, **can realize cache monitoring and fetching of multi-computer cluster at all levels besides basic operations.**
 
 - Synchronize the stand-alone cache to the Redis caching-system in a specific structure to achieve  
  the unified management of the global cache.
@@ -16,7 +16,7 @@ Java distributed second-level cache, which is achieved based on Ehcache and Redi
 
 ## 项目介绍
 
-基于Ehcache和Redis实现的Java分布式二级缓存.除基本操作以外实现多机集群时各级缓存的监管和抓取.
+基于Ehcache2和Redis实现的Java分布式二级缓存.除基本操作以外实现**多机集群时各级缓存的监管和抓取**.
 
 - 将单机缓存以特定结构同步至Redis存储,实现全局缓存统一管理.
 - 编码方式动态创建CacheManager和StoreLocation.摆脱了烦人的ehcache.xml配置文件,同时避免服务重启或不可用时缓存未同步的问题．
