@@ -9,6 +9,7 @@ package com.smart.cache;
 public abstract class Cache {
 
     static String ID;
+    static String HOST;
     static String CACHE_STORE;
     static String CACHE_STORE_SYNC;
 

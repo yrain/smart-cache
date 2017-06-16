@@ -55,8 +55,8 @@ public class UserData implements InitializingBean {
 
     public static void sleep() {
         try {
-            logger.debug("sleep 1.5s.....");
-            Thread.sleep(1500);
+            logger.debug("sleep 600ms.....");
+            Thread.sleep(600);
         } catch (Exception e) {
             // ignore
         }

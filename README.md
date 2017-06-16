@@ -35,13 +35,20 @@ Java distributed second-level cache, which is achieved based on Ehcache2 and Red
 
 
 ## 使用方式
+
+- cmd
+
+```bash
+mvn clean install -Dmaven.test.skip=true
+```
+
 - pom.xml
 
 ```xml
 <dependency>
 	<groupId>com.smart</groupId>
 	<artifactId>smart-cache</artifactId>
-	<version>0.23</version>
+	<version>${VERSION}</version>
 </dependency>
 ```
 
@@ -91,6 +98,7 @@ cacheTemplate.values(name);// 获取name下缓存值
 
 见:smart-cache/src/test/java/com/smart/cache/App.java
 
+
 ## 与Spring Cache联用
 
 - spring.xml
@@ -111,7 +119,7 @@ cacheTemplate.values(name);// 获取name下缓存值
 <dependency>
 	<groupId>com.smart</groupId>
 	<artifactId>smart-cache-autoload</artifactId>
-	<version>0.23</version>
+	<version>${VERSION}</version>
 </dependency>
 ```
 
@@ -126,28 +134,56 @@ cacheTemplate.values(name);// 获取name下缓存值
 </bean>
 ```
 
+## 缓存监控
+
+- web.xml
+
+```xml
+	<servlet>
+		<servlet-name>SmartCache</servlet-name>
+		<servlet-class>com.smart.servlet.CacheAdminServlet</servlet-class>
+		<init-param>
+			<param-name>username</param-name>
+			<param-value>admin</param-value>
+		</init-param>
+		<init-param>
+			<param-name>password</param-name>
+			<param-value>admin</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SmartCache</servlet-name>
+		<url-pattern>/smartcache/*</url-pattern>
+	</servlet-mapping>
+```
 
 
 ## 项目演示
-### Showcase
-- 管理页面:http://localhost:8080/view/admin/cache.html
-- 演示页面:http://localhost:8080/view/autoload/user.html
+
+### 监控页面
+
+- 登录页面:http://localhost:8080/smartcache/login.html
+- 用户密码:admin/admin
+- 监控页面:http://localhost:8080/smartcache/admin.html
+- 页面截图:
+![SmartCacheAdmin](./doc/cache.admin.png "SmartCacheAdmin")
+
 
 ### Showcase.AutoLoadCache
-- 查询缓存:http://localhost:8080/showcase/autoload/user/find
-- 添加数据:http://localhost:8080/showcase/autoload/user/create
+
+- 演示页面:http://localhost:8080/view/autoload/user.html
+- 页面截图:
+![SmartCacheDemo.Autoload](./doc/cache.demo.autoload.png "SmartCacheDemo.Autoload")
+
 
 ### Showcase.Spring Cache
+
 - 查询缓存:http://localhost:8080/showcase/springcache/user/find
 - 添加数据:http://localhost:8080/showcase/springcache/user/create
 
+
 注意:
 若修改了序列化方式,务必清空Redis上原缓存数据
-
-## 页面截图
-![CacheManager](./doc/cachemanager.png "CacheManager")
-
-![CacheManager.fetch](./doc/cachemanager.fetch.png "CacheManager.fetch")
 
 ## 完整配置
 

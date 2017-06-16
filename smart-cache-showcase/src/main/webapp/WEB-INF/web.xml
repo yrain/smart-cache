@@ -55,6 +55,23 @@
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 	
+	<servlet>
+		<servlet-name>SmartCache</servlet-name>
+		<servlet-class>com.smart.servlet.CacheAdminServlet</servlet-class>
+		<init-param>
+			<param-name>username</param-name>
+			<param-value>admin</param-value>
+		</init-param>
+		<init-param>
+			<param-name>password</param-name>
+			<param-value>admin</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SmartCache</servlet-name>
+		<url-pattern>/smartcache/*</url-pattern>
+	</servlet-mapping>
+	
 	
 	<welcome-file-list>
 		<welcome-file>/index.html</welcome-file>

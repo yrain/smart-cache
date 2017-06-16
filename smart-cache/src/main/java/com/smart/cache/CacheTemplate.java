@@ -22,6 +22,7 @@ import com.smart.cache.Cache.Operator;
 import com.smart.jedis.JedisTemplate;
 import com.smart.util.Dates;
 import com.smart.util.Objects;
+import com.smart.util.Utils;
 
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
@@ -78,6 +79,7 @@ public class CacheTemplate implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         Cache.ID = key + "." + Dates.newDateStringOfFormatDateTimeSSSNoneSpace();
+        Cache.HOST = Utils.getLocalHostIP();
         Cache.CACHE_STORE = key + spliter + "cache" + spliter + "store";
         Cache.CACHE_STORE_SYNC = Cache.CACHE_STORE + spliter + "sync";
         if (this.localEnabled) {
@@ -396,7 +398,7 @@ public class CacheTemplate implements InitializingBean {
      * 0,永久
      * -1,不存在
      */
-    protected int ttl(String name, String key, Level level) {
+    public int ttl(String name, String key, Level level) {
         int ttl = -1;
         if (level.equals(Level.Local)) {
             if (!localEnabled) {
@@ -479,17 +481,23 @@ public class CacheTemplate implements InitializingBean {
         this.sendFetchCmd(name, key, fetch);
         do {
             try {
-                Thread.sleep(100);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 // ignore...
             }
-            boolean isWrite = this.jedisTemplate.exists(fetch);
-            if (isWrite) {
-                return this.getJedisTemplate().hvals(fetch);
+            boolean isWrited = this.jedisTemplate.exists(fetch);
+            if (isWrited) {
+                List<CacheData> datas = this.getJedisTemplate().hvals(fetch);
+                for (int i = 0; i < datas.size(); i++) {
+                    CacheData data = datas.get(i);
+                    if (data.getTtl() > -1) {
+                        return datas;
+                    }
+                }
             }
         } while (System.currentTimeMillis() < waitMaxTime);
         logger.debug("fetch > name:" + name + ",key:" + key + ",timeout:" + this.fetchTimeoutSeconds);
-        return Collections.emptyList();
+        return this.getJedisTemplate().hvals(fetch);
     }
 
     public CacheData getCacheData(String name, String key, Level level) {

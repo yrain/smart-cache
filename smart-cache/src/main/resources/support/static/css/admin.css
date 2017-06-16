@@ -1,0 +1,195 @@
+:root {
+    box-sizing: border-box;
+    font-family: Helvetica, Arial, serif;
+}
+
+html, body {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#app {
+    display: flex;
+    height: 100%;
+}
+
+#app nav {
+    width: 400px;
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-right: 1px solid #999;
+}
+
+#app main {
+    display: flex;
+    flex-direction: column;
+    flex: auto;
+}
+
+.icon {
+    width: 1em;
+    height: 1em;
+    fill: currentColor;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+.json-formatter-row .json-formatter-string {
+    white-space: normal;
+    word-break: break-all;
+}
+
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.toolbar {
+    flex: none;
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border-right: 1px solid #dfe6ec;
+}
+
+.toolbar .el-input {
+    width: 200px;
+}
+
+#app nav .names {
+    flex: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+#app nav .names .el-button--text {
+    padding: 0 6px;
+}
+
+.toolbar .el-button + .el-button {
+    margin-left: 0;
+}
+
+#app main > div {
+    display: flex;
+    border-bottom: 1px solid #999;
+}
+
+#app main > div:first-child {
+    flex: 5;
+    border-bottom: 1px solid #999;
+}
+
+#app main > div:last-child {
+    flex: 3;
+}
+
+#app main > div:last-child {
+    border-bottom: none;
+}
+
+.table-view {
+    flex: 5;
+    display: flex;
+    flex-direction: column;
+}
+
+.table-wrapper {
+    flex: auto;
+    display: flex;
+    overflow: auto;
+}
+
+.review {
+    flex: 4;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+}
+
+.review h3 {
+    border-bottom: 1px solid #dfe6ec;
+    margin: 0;
+    height: 60px;
+    line-height: 60px;
+    padding: 0 20px;
+}
+
+#redis, #host {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#redis .header,
+#host .header {
+    flex: none;
+    height: 40px;
+    border: 1px solid #dfe6ec;
+    background-color: #eef1f6;
+    box-sizing: border-box;
+}
+
+#redis .content-wrapper,
+#host .content-wrapper{
+    flex: auto;
+    overflow: auto;
+}
+
+/*
+*  list-group
+*/
+.list-group {
+    display: flex;
+    flex-direction: column;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.list-group-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: -1px;
+    color: #464a4c;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    cursor: pointer;
+}
+
+.list-group-item span {
+    flex: auto;
+}
+
+.list-group-item i {
+    flex: none;
+}
+
+.list-group-item:last-child {
+    margin-bottom: 0;
+}
+
+.list-group-item:focus, .list-group-item:hover {
+    color: #464a4c;
+    text-decoration: none;
+    background-color: #f7f7f9;
+}
+
+.list-group-item.active {
+    color: #292b2c;
+    background-color: #eceeef;
+}
+
+.list-group-item.active .list-group-item-text {
+    color: #daeeff;
+}

@@ -31,13 +31,13 @@
 		<property name="testWhileIdle" value="${redis.test.while.idle:false}"/>
 		<property name="testOnReturn" value="${redis.test.on.return:false}"/>
 	</bean>
-
+	
 	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
 		<constructor-arg name="poolConfig" ref="jedisPoolConfig" />
 		<constructor-arg name="host" 	   value="${redis.host}" />
 		<constructor-arg name="port" 	   value="${redis.port}" />
 	</bean>
-	
+
 	<bean id="jedisTemplate" class="com.smart.jedis.JedisTemplate">
 		<property name="jedisPool" ref="jedisPool" />
 	</bean>
