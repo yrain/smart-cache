@@ -12,10 +12,27 @@ html, body {
 
 #app {
     display: flex;
+    flex-direction: column;
     height: 100%;
 }
 
-#app nav {
+#app header {
+    flex: none;
+    background-color: #2196F3;
+    color: #fff;
+    height: 60px;
+    line-height:60px;
+    padding: 0 20px;
+    font-size: 24px;
+    font-weight: bolder;
+}
+
+#content {
+    flex: auto;
+    display: flex;
+}
+
+#content nav {
     width: 400px;
     flex: none;
     display: flex;
@@ -24,7 +41,7 @@ html, body {
     border-right: 1px solid #999;
 }
 
-#app main {
+#content main {
     display: flex;
     flex-direction: column;
     flex: auto;
@@ -64,13 +81,13 @@ ul {
     width: 200px;
 }
 
-#app nav .names {
+#content nav .names {
     flex: auto;
     overflow-x: hidden;
     overflow-y: auto;
 }
 
-#app nav .names .el-button--text {
+#content nav .names .el-button--text {
     padding: 0 6px;
 }
 
@@ -78,21 +95,21 @@ ul {
     margin-left: 0;
 }
 
-#app main > div {
+#content main > div {
     display: flex;
     border-bottom: 1px solid #999;
 }
 
-#app main > div:first-child {
+#content main > div:first-child {
     flex: 5;
     border-bottom: 1px solid #999;
 }
 
-#app main > div:last-child {
+#content main > div:last-child {
     flex: 3;
 }
 
-#app main > div:last-child {
+#content main > div:last-child {
     border-bottom: none;
 }
 

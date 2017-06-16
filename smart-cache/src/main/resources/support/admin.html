@@ -1,126 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<title>Smart Cache Admin</title>
-		<link rel="stylesheet" href="./static/lib/element-ui/element-ui.css">
-		<link rel="stylesheet" href="./static/lib/json-formatter/json-formatter.css">
-		<link rel="stylesheet" href="./static/css/admin.css">
-	</head>
-	<body>
-		<div id="app">
-			<nav>
-				<!-- toolbar -->
-				<div class="toolbar">
-					<el-input :icon="filter?'close':''" v-model="filter" :on-icon-click="clearFilter">
-					</el-input>
-					<el-button :loading="namesLoading" @click="reload">
-						Reload
-					</el-button>
-					<el-button @click="cls">
-						Clear
-					</el-button>
-				</div>
-				<!-- names -->
-				<div class="names" v-loading="namesLoading">
-					<ul class="list-group">
-						<li v-for="n in filterNames" class="list-group-item" @click="selectName(n)" :class="{active:n==name}" :title="n">
-							<span class="text-truncate">{{n}}</span>
-							<el-button type="text" @click="rem(n, $event)">
-								Remove
-							</el-button>
-						</li>
-					</ul>
-				</div>
-			</nav>
-			<main>
-				<!-- keys -->
-				<div>
-					<!-- keys table -->
-					<div class="table-view">
-						<div class="toolbar">
-							<el-input :icon="keyFilter?'close':''" v-model="keyFilter" :on-icon-click="clearKeyFilter">
-							</el-input>
-							<el-button :loading="keysLoading" @click="reloadKeys">
-								Reload
-							</el-button>
-						</div>
-						<div class="table-wrapper" v-loading="keysLoading">
-							<el-table :data="filterKeys" height="100%" highlight-current-row empty-text="Empty.." @row-click="selectKey">
-								<el-table-column type="index" width="50">
-								</el-table-column>
-								<el-table-column prop="name" label="Key">
-								</el-table-column>
-								<el-table-column label="Action" width="180">
-									<template scope="scope">
-										<el-button type="text" size="small" @click="del(scope.row.name, $event)">
-											Del
-										</el-button>
-									</template>
-								</el-table-column>
-							</el-table>
-						</div>
-					</div>
-					<div class="review">
-						<h3>Redis Value</h3>
-						<div id="redis">
-							<div class="header">
-							</div>
-							<div class="content-wrapper" v-loading="redisLoading">
-							</div>
-						</div>
-					</div>
-					<!-- redis value -->
-				</div>
-				<!-- hosts -->
-				<div>
-					<!-- hosts tab -->
-					<div class="table-view">
-						<div class="toolbar">
-							<el-input :icon="hostFilter?'close':''" v-model="hostFilter" :on-icon-click="clearHostFilter">
-							</el-input>
-							<el-button :loading="hostsLoading" @click="reloadHosts">
-								Reload
-							</el-button>
-						</div>
-						<div class="table-wrapper" v-loading="hostsLoading">
-							<el-table :data="filterHosts" height="100%" highlight-current-row empty-text="Empty.." @row-click="selectHost">
-								<el-table-column type="index" width="50">
-								</el-table-column>
-								<el-table-column prop="id" label="ID">
-								</el-table-column>
-								<el-table-column prop="host" label="Host">
-								</el-table-column>
-								<el-table-column prop="level" label="Level">
-								</el-table-column>
-								<el-table-column prop="tti" label="tti">
-								</el-table-column>
-								<el-table-column prop="ttl" label="ttl">
-								</el-table-column>
-								<!--<el-table-column label="Action" width="180">-->
-								<!--<template scope="scope">-->
-								<!--<el-button type="text" size="small" @click="del(scope.row.name)">del</el-button>-->
-								<!--</template>-->
-								<!--</el-table-column>-->
-							</el-table>
-						</div>
-					</div>
-					<!-- local value -->
-					<div class="review">
-						<h3>Local Value</h3>
-						<div id="host">
-							<div class="header">
-							</div>
-							<div class="content-wrapper">
-							</div>
-						</div>
-					</div>
-				</div>
-			</main>
-			<script src="./static/lib/vue/vue.min.js"></script>
-			<script src="./static/lib/element-ui/element-ui.js"></script>
-			<script src="./static/lib/json-formatter/json-formatter.js"></script>
-			<script src="./static/js/admin.js"></script>
-		</div>
-	</body>
+    <head>
+        <meta charset="UTF-8">
+        <title>Smart Cache Admin</title>
+        <link rel="stylesheet" href="./static/lib/element-ui/element-ui.css">
+        <link rel="stylesheet" href="./static/lib/json-formatter/json-formatter.css">
+        <link rel="stylesheet" href="./static/css/admin.css">
+    </head>
+    <body>
+        <div id="app">
+            <header>
+                Smart Cache Admin
+            </header>
+            <div id="content">
+                <nav>
+                    <!-- toolbar -->
+                    <div class="toolbar">
+                        <el-input :icon="filter?'close':''" v-model="filter" :on-icon-click="clearFilter"></el-input>
+                        <el-button :loading="namesLoading" @click="reload">Reload</el-button>
+                        <el-button @click="cls">Clear</el-button>
+                    </div>
+                    <!-- names -->
+                    <div class="names" v-loading="namesLoading">
+                        <ul class="list-group">
+                            <li v-for="n in filterNames" class="list-group-item" @click="selectName(n)" :class="{active:n==name}" :title="n">
+                                <span class="text-truncate">{{n}}</span>
+                                <el-button type="text" @click="rem(n, $event)">Remove</el-button>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <main>
+                    <!-- keys -->
+                    <div>
+                        <!-- keys table -->
+                        <div class="table-view">
+                            <div class="toolbar">
+                                <el-input :icon="keyFilter?'close':''" v-model="keyFilter" :on-icon-click="clearKeyFilter"></el-input>
+                                <el-button :loading="keysLoading" @click="reloadKeys">Reload</el-button>
+                            </div>
+                            <div class="table-wrapper" v-loading="keysLoading">
+                                <el-table :data="filterKeys" height="100%" highlight-current-row empty-text="Empty.." @row-click="selectKey">
+                                    <el-table-column type="index" width="50"></el-table-column>
+                                    <el-table-column prop="name" label="Key"></el-table-column>
+                                    <el-table-column label="Action" width="180">
+                                        <template scope="scope">
+                                            <el-button type="text" size="small" @click="del(scope.row.name, $event)">Del</el-button>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            </div>
+                        </div>
+                        <div class="review">
+                            <h3>Remote Value</h3>
+                            <div id="redis">
+                                <div class="header"></div>
+                                <div class="content-wrapper" v-loading="redisLoading"></div>
+                            </div>
+                        </div>
+                        <!-- redis value -->
+                    </div>
+                    <!-- hosts -->
+                    <div>
+                        <!-- hosts tab -->
+                        <div class="table-view">
+                            <div class="toolbar">
+                                <el-input :icon="hostFilter?'close':''" v-model="hostFilter" :on-icon-click="clearHostFilter"></el-input>
+                                <el-button :loading="hostsLoading" @click="reloadHosts">Reload</el-button>
+                            </div>
+                            <div class="table-wrapper" v-loading="hostsLoading">
+                                <el-table :data="filterHosts" height="100%" highlight-current-row empty-text="Empty.." @row-click="selectHost">
+                                    <el-table-column type="index" width="50"></el-table-column>
+                                    <el-table-column prop="id" label="ID"></el-table-column>
+                                    <el-table-column prop="host" label="Host"></el-table-column>
+                                    <el-table-column prop="level" label="Level"></el-table-column>
+                                    <el-table-column prop="tti" label="tti"></el-table-column>
+                                    <el-table-column prop="ttl" label="ttl"></el-table-column>
+                                    <!--<el-table-column label="Action" width="180">-->
+                                    <!--<template scope="scope">-->
+                                    <!--<el-button type="text" size="small" @click="del(scope.row.name)">del</el-button>-->
+                                    <!--</template>-->
+                                    <!--</el-table-column>-->
+                                </el-table>
+                            </div>
+                        </div>
+                        <!-- local value -->
+                        <div class="review">
+                            <h3>Local Value</h3>
+                            <div id="host">
+                                <div class="header"></div>
+                                <div class="content-wrapper"></div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+            <script src="./static/lib/vue/vue.min.js"></script>
+            <script src="./static/lib/element-ui/element-ui.js"></script>
+            <script src="./static/lib/json-formatter/json-formatter.js"></script>
+            <script src="./static/js/admin.js"></script>
+        </div>
+    </body>
 </html>
