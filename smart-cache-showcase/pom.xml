@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.smart</groupId>
 		<artifactId>smart</artifactId>
-		<version>1.23-SNAPSHOT</version>
+		<version>1.23</version>
 	</parent>
 	<artifactId>smart-cache-showcase</artifactId>
 	<name>${project.artifactId}</name>	
