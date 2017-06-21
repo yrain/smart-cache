@@ -3,6 +3,12 @@ package com.smart.util;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 
+/**
+ * Jsons
+ * -----------------------------------------------------------------------------------------------------------------------------------
+ * 
+ * @author YRain
+ */
 public class Jsons {
 
     public static final SerializerFeature[] ToJSONStringFeatures = { SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue, SerializerFeature.DisableCircularReferenceDetect };

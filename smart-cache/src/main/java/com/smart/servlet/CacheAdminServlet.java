@@ -19,6 +19,12 @@ import com.smart.util.Jsons;
 import com.smart.util.Strings;
 import com.smart.util.Utils;
 
+/**
+ * CacheAdminServlet
+ * -----------------------------------------------------------------------------------------------------------------------------------
+ * 
+ * @author YRain
+ */
 public class CacheAdminServlet extends HttpServlet {
 
     private static final long  serialVersionUID    = 4033915519705451079L;
@@ -146,7 +152,7 @@ public class CacheAdminServlet extends HttpServlet {
         //
         else if (url.equals("/keys")) {
             if (null != name && name.length() > 0) {
-                return returnJSONResultSuccess(RESULT_CODE_SUCCESS, cacheTemplate.keys(name));
+                return returnJSONResultSuccess(RESULT_CODE_SUCCESS, cacheTemplate.getKeysData(name));
             }
         }
         //

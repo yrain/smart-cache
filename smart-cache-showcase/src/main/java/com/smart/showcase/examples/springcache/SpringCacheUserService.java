@@ -40,7 +40,7 @@ public class SpringCacheUserService {
         userDao.delete(id);
     }
 
-    @Cacheable(value = KEY_USER_FIND)
+    @Cacheable(value = KEY_USER_FIND, key = "'all'")
     public List<User> find() {
         return userDao.find();
     }

@@ -6,6 +6,12 @@ import org.springframework.cache.support.SimpleValueWrapper;
 
 import com.smart.cache.CacheTemplate;
 
+/**
+ * Cache
+ * -----------------------------------------------------------------------------------------------------------------------------------
+ * 
+ * @author YRain
+ */
 public class Cache implements org.springframework.cache.Cache {
 
     private String        name;

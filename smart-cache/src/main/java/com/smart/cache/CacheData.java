@@ -38,11 +38,6 @@ public class CacheData implements Serializable {
     private Object            value;
 
     /**
-     * 缓存tti
-     */
-    private int               tti;
-
-    /**
      * 缓存ttl
      */
     private int               ttl;
@@ -55,14 +50,13 @@ public class CacheData implements Serializable {
     public CacheData() {
     }
 
-    public CacheData(String name, String key, Object value, int tti, int ttl, Level level) {
+    public CacheData(String name, String key, Object value, int ttl, Level level) {
         super();
         this.id = Cache.ID;
         this.host = Cache.HOST;
         this.name = name;
         this.key = key;
         this.value = value;
-        this.tti = tti;
         this.ttl = ttl;
         this.level = level;
     }
@@ -107,14 +101,6 @@ public class CacheData implements Serializable {
         this.value = value;
     }
 
-    public int getTti() {
-        return tti;
-    }
-
-    public void setTti(int tti) {
-        this.tti = tti;
-    }
-
     public int getTtl() {
         return ttl;
     }
@@ -133,7 +119,7 @@ public class CacheData implements Serializable {
 
     @Override
     public String toString() {
-        return "CacheData [id=" + id + ", host=" + host + ", name=" + name + ", key=" + key + ", value=" + value + ", tti=" + tti + ", ttl=" + ttl + ", level=" + level + "]";
+        return "CacheData [id=" + id + ", host=" + host + ", name=" + name + ", key=" + key + ", value=" + value + ", ttl=" + ttl + ", level=" + level + "]";
     }
 
 }

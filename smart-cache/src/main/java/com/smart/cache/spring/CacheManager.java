@@ -8,6 +8,12 @@ import org.springframework.cache.transaction.AbstractTransactionSupportingCacheM
 
 import com.smart.cache.CacheTemplate;
 
+/**
+ * CacheManager
+ * -----------------------------------------------------------------------------------------------------------------------------------
+ * 
+ * @author YRain
+ */
 public class CacheManager extends AbstractTransactionSupportingCacheManager {
 
     private CacheTemplate cacheTemplate;

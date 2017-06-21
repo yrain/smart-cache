@@ -21,7 +21,6 @@ import com.smart.cache.Cache.Level;
 import com.smart.cache.Cache.Operator;
 import com.smart.jedis.JedisTemplate;
 import com.smart.util.Dates;
-import com.smart.util.Objects;
 import com.smart.util.Utils;
 
 import net.sf.ehcache.CacheException;
@@ -61,14 +60,15 @@ public class CacheTemplate implements InitializingBean {
     private String                                           localMaxBytesLocalHeap               = "256M";
     // 本地缓存最大磁盘大小
     private String                                           localMaxBytesLocalDisk               = "1024M";
-    // 本地缓存15分钟过期
-    private int                                              localTimeToIdleSeconds               = 15 * 60;
-    // 本地缓存ttl默认值,为使本地缓存和远程缓存TTL一致.故设置为0
-    private final int                                        localTimeToLiveSeconds               = 0;
+
+    // 本地缓存10分钟过期
+    private int                                              localTimeToLiveSeconds               = 10 * 60;
+    // 不使用timeToIdle
+    private final int                                        localTimeToIdleSeconds               = 0;
     // 本地缓存3分钟清理一次
     private int                                              localDiskExpiryThreadIntervalSeconds = 3 * 60;
     // fetch命令最长等待5秒
-    private int                                              fetchTimeoutSeconds                  = 5;
+    private int                                              fetchTimeoutSeconds                  = 3;
 
     private JedisTemplate                                    jedisTemplate;
     private net.sf.ehcache.CacheManager                      cacheManager;
@@ -95,15 +95,17 @@ public class CacheTemplate implements InitializingBean {
             // DefaultCache
             CacheConfiguration defaultCacheConfiguration = new CacheConfiguration();
             defaultCacheConfiguration.setEternal(false);
-            defaultCacheConfiguration.setTimeToIdleSeconds(localTimeToIdleSeconds);
-            defaultCacheConfiguration.setTimeToLiveSeconds(localTimeToLiveSeconds);
             defaultCacheConfiguration.setOverflowToDisk(true);
             defaultCacheConfiguration.setDiskPersistent(false);
             defaultCacheConfiguration.memoryStoreEvictionPolicy(MemoryStoreEvictionPolicy.LRU);
             defaultCacheConfiguration.setDiskExpiryThreadIntervalSeconds(localDiskExpiryThreadIntervalSeconds);
             // 默认false,使用引用.设置为true,避免外部代码修改了缓存对象.造成EhCache的缓存对象也随之改变
+            // 但是设置为true后,将引起element的tti不自动刷新.如果直接新建element去覆盖原值.则本地ttl和远程ttl会产生一定的误差.
+            // 因此,使用时放弃手动覆盖方式刷新本地tti,当本地tti过期后,自动从Redis中再获取即可.
             defaultCacheConfiguration.copyOnRead(true);
             defaultCacheConfiguration.copyOnWrite(true);
+            defaultCacheConfiguration.setTimeToIdleSeconds(localTimeToIdleSeconds);
+            defaultCacheConfiguration.setTimeToLiveSeconds(localTimeToLiveSeconds);
             configuration.setDefaultCacheConfiguration(defaultCacheConfiguration);
             configuration.setDynamicConfig(false);
             configuration.setUpdateCheck(false);
@@ -131,7 +133,7 @@ public class CacheTemplate implements InitializingBean {
     }
 
     /**
-     * 设置缓存(根据缓存级别)
+     * 设置缓存(根据缓存层级)
      */
     protected void set(String name, String key, Object value, Level level) {
         if (level.equals(Level.Local)) {
@@ -143,7 +145,7 @@ public class CacheTemplate implements InitializingBean {
             this.syncToRedis(name, key, value, Operator.SET);
         }
         if (logger.isDebugEnabled()) {
-            logger.debug("set > name:" + name + ",key:" + key + ",tti:" + this.tti(name, key) + ",ttl:" + this.ttl(name, key, level) + ",level:" + level);
+            logger.debug("set > name:" + name + ",key:" + key + ",local.ttl:" + this.ttl(name, key, Level.Local) + ",remote.ttl:" + this.ttl(name, key, Level.Remote) + ",level:" + level);
         }
     }
 
@@ -166,26 +168,27 @@ public class CacheTemplate implements InitializingBean {
     }
 
     /**
-     * 设置缓存与过期时间(根据缓存级别)
+     * 设置缓存与过期时间(根据缓存层级)
      */
     protected void set(String name, String key, Object value, int ttl, Level level) {
         if (level.equals(Level.Local)) {
             if (!localEnabled) {
                 return;
             }
-            if (ttl <= 0) {
-                // 当远程缓存ttl=0永久有效时,则使用本地缓存默认的tti和ttl
-                this.getEhcache(name).put(new Element(key, value, false, localTimeToIdleSeconds, ttl));
+            if (ttl < 0) {
+                return;
+            } else if (ttl == 0) {
+                this.getEhcache(name).put(new Element(key, value, false, localTimeToIdleSeconds, localTimeToLiveSeconds));
             } else {
-                // 当远程缓存非永久有效时,若远程缓存的ttl小于本地缓存默认的ttl,则使用远程缓存的ttl,反之亦然.
-                int tti = ttl < localTimeToIdleSeconds ? ttl : localTimeToIdleSeconds;
-                this.getEhcache(name).put(new Element(key, value, false, tti, ttl));
+                // 当设置的ttl时间大于本地默认的缓存TTL,则使用本地默认的TTL,即localTimeToIdleSeconds.反之亦然.
+                ttl = ttl < localTimeToLiveSeconds ? ttl : localTimeToLiveSeconds;
+                this.getEhcache(name).put(new Element(key, value, false, localTimeToIdleSeconds, ttl));
             }
         } else {
             this.syncToRedis(name, key, value, ttl, Operator.SET); // 记录缓存名称到Redis
         }
         if (logger.isDebugEnabled()) {
-            logger.debug("set > name:" + name + ",key:" + key + ",tti:" + this.tti(name, key) + ",ttl:" + this.ttl(name, key, level) + ",level:" + level);
+            logger.debug("set > name:" + name + ",key:" + key + ",local.ttl:" + this.ttl(name, key, Level.Local) + ",remote.ttl:" + this.ttl(name, key, Level.Remote) + ",level:" + level);
         }
     }
 
@@ -239,10 +242,10 @@ public class CacheTemplate implements InitializingBean {
     }
 
     /**
-     * 获取缓存值(根据缓存级别)
+     * 获取缓存值(根据缓存层级)
      */
     @SuppressWarnings("unchecked")
-    protected <T> T get(String name, String key, Level level) {
+    public <T> T get(String name, String key, Level level) {
         T value = null;
         if (level.equals(Level.Local)) {
             if (!localEnabled) {
@@ -253,26 +256,15 @@ public class CacheTemplate implements InitializingBean {
             }
             Element element = this.getEhcache(name).get(key);
             if (logger.isDebugEnabled()) {
-                logger.debug("get > name:" + name + ",key:" + key + ",tti:" + this.tti(name, key) + ",ttl:" + this.ttl(name, key, level) + ",level:" + level);
+                logger.debug("get > name:" + name + ",key:" + key + ",local.ttl:" + this.ttl(name, key, Level.Local) + ",remote.ttl:" + this.ttl(name, key, Level.Remote) + ",level:" + level);
             }
             if (element != null) {
                 value = (T) element.getObjectValue();
-                // 因设置CopyOnRead:true,在读取中不会更新Element的tti,所以需要手动刷新
-                int ttl = this.ttl(name, key, Level.Local);
-                // this.set(name, key, value, ttl, Level.Local); // 避免打印日志.屏蔽,且使用如下重复代码刷新
-                if (ttl <= 0) {
-                    // 当远程缓存ttl=0永久有效时,则使用本地缓存默认的tti和ttl
-                    this.getEhcache(name).put(new Element(key, value, false, localTimeToIdleSeconds, ttl));
-                } else {
-                    // 当远程缓存非永久有效时,若远程缓存的ttl小于本地缓存默认的ttl,则使用远程缓存的ttl,反之亦然.
-                    int tti = ttl < localTimeToIdleSeconds ? ttl : localTimeToIdleSeconds;
-                    this.getEhcache(name).put(new Element(key, value, false, tti, ttl));
-                }
             }
         } else {
             value = this.jedisTemplate.get(this.getRedisKeyOfElement(name, key));
             if (logger.isDebugEnabled()) {
-                logger.debug("get > name:" + name + ",key:" + key + ",tti:" + this.tti(name, key) + ",ttl:" + this.ttl(name, key, level) + ",level:" + level);
+                logger.debug("get > name:" + name + ",key:" + key + ",local.ttl:" + this.ttl(name, key, Level.Local) + ",remote.ttl:" + this.ttl(name, key, Level.Remote) + ",level:" + level);
             }
             if (value != null) {
                 int ttl = this.ttl(name, key, Level.Remote);
@@ -300,7 +292,7 @@ public class CacheTemplate implements InitializingBean {
     }
 
     /**
-     * 删除单个缓存值(根据缓存级别)
+     * 删除单个缓存值(根据缓存层级)
      */
     protected void del(String name, String key, Level level) {
         if (level.equals(Level.Local)) {
@@ -329,7 +321,7 @@ public class CacheTemplate implements InitializingBean {
     }
 
     /**
-     * 删除指定name下所有缓存(根据缓存级别)
+     * 删除指定name下所有缓存(根据缓存层级)
      */
     protected void rem(String name, Level level) {
         if (level.equals(Level.Local)) {
@@ -359,7 +351,7 @@ public class CacheTemplate implements InitializingBean {
     }
 
     /**
-     * 清除所有缓存(根据缓存级别)
+     * 清除所有缓存(根据缓存层级)
      */
     protected void cls(Level level) {
         if (level.equals(Level.Local)) {
@@ -378,23 +370,7 @@ public class CacheTemplate implements InitializingBean {
     // ttl
     // ---------------------------------------------------------------------------------------------------
     /**
-     * 获取缓存过期剩余时间.单位为秒
-     * 0,永久
-     * -1,不存在
-     */
-    public int ttl(String name, String key) {
-        int ttl = -1;
-        if (localEnabled) {
-            ttl = this.ttl(name, key, Level.Local);
-        }
-        if (ttl <= -1) {
-            ttl = this.ttl(name, key, Level.Remote);
-        }
-        return ttl;
-    }
-
-    /**
-     * 获取缓存过期剩余时间.单位为秒
+     * 获取本地缓存过期剩余时间.单位为秒(根据缓存层级)
      * 0,永久
      * -1,不存在
      */
@@ -419,40 +395,13 @@ public class CacheTemplate implements InitializingBean {
         return ttl;
     }
 
-    /**
-     * 获取本地缓存idle时间.单位为秒
-     */
-    public int tti(String name, String key) {
-        int ttl = -1;
-        if (!localEnabled) {
-            return -1;
-        }
-        if (this.ehcaches.containsKey(name)) {
-            Element element = this.getEhcache(name).get(key);
-            if (element != null) {
-                ttl = element.getTimeToIdle();
-                if (ttl != 0) {
-                    ttl = ttl - (int) ((System.currentTimeMillis() - element.getCreationTime()) / 1000);
-                }
-            }
-        }
-        return ttl;
-    }
-
     //
     // exists
     // ---------------------------------------------------------------------------------------------------
     /**
-     * 判断缓存是否存在,以远程缓存为准.
+     * 判断缓存是否存在(根据缓存层级)
      */
-    public boolean isExists(String name, String key) {
-        return this.isExists(name, key, Level.Remote);
-    }
-
-    /**
-     * 判断缓存是否存在,以远程缓存为准.
-     */
-    public boolean isExists(String name, String key, Level level) {
+    public boolean exists(String name, String key, Level level) {
         boolean flag = false;
         if (level.equals(Level.Local)) {
             if (this.ehcaches.containsKey(name)) {
@@ -476,38 +425,28 @@ public class CacheTemplate implements InitializingBean {
      */
     public List<CacheData> fetch(String name, String key) {
         logger.debug("fetch > name:" + name + ",key:" + key);
+        List<CacheData> datas = Collections.emptyList();
         long waitMaxTime = System.currentTimeMillis() + this.fetchTimeoutSeconds * 1000;
         String fetch = this.getRedisKeyOfElement(name, key) + spliter + "fetch" + spliter + Dates.newDateStringOfFormatDateTimeSSSNoneSpace();
         this.sendFetchCmd(name, key, fetch);
         do {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(300);
             } catch (InterruptedException e) {
                 // ignore...
             }
             boolean isWrited = this.jedisTemplate.exists(fetch);
             if (isWrited) {
-                List<CacheData> datas = this.getJedisTemplate().hvals(fetch);
-                for (int i = 0; i < datas.size(); i++) {
-                    CacheData data = datas.get(i);
-                    if (data.getTtl() > -1) {
+                datas = this.jedisTemplate.hvals(fetch);
+                for (CacheData data : datas) {
+                    if (data.getTtl() >= 0) {
                         return datas;
                     }
                 }
             }
         } while (System.currentTimeMillis() < waitMaxTime);
-        logger.debug("fetch > name:" + name + ",key:" + key + ",timeout:" + this.fetchTimeoutSeconds);
-        return this.getJedisTemplate().hvals(fetch);
-    }
-
-    public CacheData getCacheData(String name, String key, Level level) {
-        String value = Objects.toString(this.get(name, key, level));
-        int tti = -1;
-        if (Level.Local.equals(level)) {
-            tti = this.tti(name, key);
-        }
-        int ttl = this.ttl(name, key, level);
-        return new CacheData(name, key, value, tti, ttl, level);
+        logger.debug("fetch > name:" + name + ",key:" + key + ",timeout:" + this.fetchTimeoutSeconds); // fetch timeout
+        return datas;
     }
 
     //
@@ -525,6 +464,18 @@ public class CacheTemplate implements InitializingBean {
      */
     public Set<String> keys(String name) {
         return this.getElements(name);
+    }
+
+    /**
+     * 获取name下所有缓存Key及其相关信息
+     */
+    public List<CacheData> getKeysData(String name) {
+        List<CacheData> datas = Lists.newArrayList();
+        Set<String> keys = this.keys(name);
+        for (String key : keys) {
+            datas.add(new CacheData(name, key, null, this.ttl(name, key, Level.Remote), Level.Remote));
+        }
+        return datas;
     }
 
     /**
@@ -878,12 +829,12 @@ public class CacheTemplate implements InitializingBean {
         this.localMaxBytesLocalDisk = localMaxBytesLocalDisk;
     }
 
-    public int getLocalTimeToIdleSeconds() {
-        return localTimeToIdleSeconds;
+    public int getLocalTimeToLiveSeconds() {
+        return localTimeToLiveSeconds;
     }
 
-    public void setLocalTimeToIdleSeconds(int localTimeToIdleSeconds) {
-        this.localTimeToIdleSeconds = localTimeToIdleSeconds;
+    public void setLocalTimeToLiveSeconds(int localTimeToLiveSeconds) {
+        this.localTimeToLiveSeconds = localTimeToLiveSeconds;
     }
 
     public int getLocalDiskExpiryThreadIntervalSeconds() {
@@ -892,10 +843,6 @@ public class CacheTemplate implements InitializingBean {
 
     public void setLocalDiskExpiryThreadIntervalSeconds(int localDiskExpiryThreadIntervalSeconds) {
         this.localDiskExpiryThreadIntervalSeconds = localDiskExpiryThreadIntervalSeconds;
-    }
-
-    public int getLocalTimeToLiveSeconds() {
-        return localTimeToLiveSeconds;
     }
 
     public void setLocalEnabled(boolean localEnabled) {

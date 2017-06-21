@@ -28,11 +28,11 @@ new Vue({
         },
         filterKeys() {
             const vm = this, filter = vm.keyFilter, keys = vm.keys;
-            return keys.filter(key => key.name.toUpperCase().indexOf(filter.toUpperCase()) !== -1);
+            return keys.filter(key => key.key.toUpperCase().indexOf(filter.toUpperCase()) !== -1);
         },
         filterHosts() {
             const vm = this, filter = vm.hostFilter, hosts = vm.hosts;
-            return hosts.filter(host => host.host.toUpperCase().indexOf(filter.toUpperCase()) !== -1);
+            return hosts.filter(host => host.id.toUpperCase().indexOf(filter.toUpperCase()) !== -1);
         }
     },
     watch: {
@@ -53,7 +53,6 @@ new Vue({
         resetAll() {
             const vm = this;
             vm.resetKeys();
-            vm.filter = '';
             vm.name = '';
         },
         resetKeys() {
@@ -80,7 +79,7 @@ new Vue({
             this.name = name;
         },
         selectKey(selection) {
-            this.key = selection.name;
+            this.key = selection.key;
         },
         selectHost(selection) {
             this.host = selection;
@@ -204,7 +203,11 @@ new Vue({
                         resolve([]);
                         return;
                     }
-                    resolve(result.data);
+                    let data = result.data || [];
+                    data.sort((a, b) => {
+                        return a.localeCompare(b);
+                    });
+                    resolve(data);
                 }).catch(() => {
                     vm.namesLoading = false;
                     vm.$message.error('Error!');
@@ -223,9 +226,8 @@ new Vue({
                         resolve([]);
                         return;
                     }
-                    let data = (result.data || []).map(name => {
-                        return {name};
-                    });
+                    let data = (result.data || []).filter(item => !!item);
+                    data.sort((a, b) => (a.key || '').localeCompare(b.key || ''));
                     resolve(data);
                 }).catch(() => {
                     vm.keysLoading = false;
@@ -264,7 +266,9 @@ new Vue({
                         resolve([]);
                         return;
                     }
-                    resolve(result.data || []);
+                    let data = (result.data || []).filter(item => !!item);
+                    data.sort((a, b) => (a.id || '').localeCompare(b.id || ''));
+                    resolve(data);
                 }).catch(() => {
                     vm.hostsLoading = false;
                     vm.$message.error('Error!');

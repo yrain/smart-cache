@@ -44,14 +44,13 @@ public class CacheSyncHandler {
 
     private void onFetch(String name, String key, String fetch) {
         logger.debug("onFetch > " + name + "." + key.toString() + "," + "fetch:" + fetch);
-        boolean isExists = this.cacheTemplate.isExists(name, key, Level.Local);
-        if (isExists) {
+        boolean exists = this.cacheTemplate.exists(name, key, Level.Local);
+        if (exists) {
             Object value = this.cacheTemplate.get(name, key, Level.Local);
             int ttl = this.cacheTemplate.ttl(name, key, Level.Local);
-            int tti = this.cacheTemplate.tti(name, key);
-            this.cacheTemplate.getJedisTemplate().hset(fetch, Cache.ID, new CacheData(name, key, Objects.toString(value), tti, ttl, Level.Local), cacheTemplate.getFetchTimeoutSeconds());
+            this.cacheTemplate.getJedisTemplate().hset(fetch, Cache.ID, new CacheData(name, key, Objects.toString(value), ttl, Level.Local), cacheTemplate.getFetchTimeoutSeconds());
         } else {
-            this.cacheTemplate.getJedisTemplate().hset(fetch, Cache.ID, new CacheData(name, key, null, -1, -1, Level.Local), cacheTemplate.getFetchTimeoutSeconds());
+            this.cacheTemplate.getJedisTemplate().hset(fetch, Cache.ID, new CacheData(name, key, null, -1, Level.Local), cacheTemplate.getFetchTimeoutSeconds());
         }
     }
 

@@ -88,8 +88,7 @@ cacheTemplate.del(name, key);// 删除
 cacheTemplate.rem(name);// 删除name下所有缓存
 cacheTemplate.cls();// 清空所有缓存
 cacheTemplate.fetch(name, key);// 抓取集群下所有单机一级缓存
-cacheTemplate.ttl(name, key);// 获取缓存ttl
-cacheTemplate.tti(name, key);// 获取缓存tti
+cacheTemplate.ttl(name, key, level);// 获取缓存ttl
 cacheTemplate.names();// 获取所有缓存name
 cacheTemplate.keys(name);// 获取name下所有key
 cacheTemplate.size(name);// 获取name下缓存数量
@@ -222,9 +221,9 @@ cacheTemplate.values(name);// 获取name下缓存值
 	<property name="localStoreLocation" value="/cache/" /><!-- 本地缓存存储磁盘位置  -->
 	<property name="localMaxBytesLocalHeap" value="128M" /><!-- 本地缓存最大内存大小 -->
 	<property name="localMaxBytesLocalDisk" value="1024M" /><!-- 本地缓存最大磁盘大小  -->
-	<property name="localTimeToIdleSeconds" value="1800" /><!-- 本地缓存15分钟过期  -->
+	<property name="localTimeToLiveSeconds" value="600" /><!-- 本地缓存10分钟过期  -->
 	<property name="localDiskExpiryThreadIntervalSeconds" value="180" /><!-- 本地缓存3分钟清理一次  -->
-	<property name="fetchTimeoutSeconds" value="5" /><!-- fetch命令最长等待5秒  -->
+	<property name="fetchTimeoutSeconds" value="3" /><!-- fetch命令最长等待3秒  -->
 	<property name="jedisTemplate" ref="jedisTemplate" /><!-- jedis操作类  -->
 </bean>
 ```

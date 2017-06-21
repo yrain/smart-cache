@@ -33,7 +33,7 @@ html, body {
 }
 
 #content nav {
-    width: 400px;
+    width: 360px;
     flex: none;
     display: flex;
     flex-direction: column;
@@ -78,7 +78,7 @@ ul {
 }
 
 .toolbar .el-input {
-    width: 200px;
+    width: 150px;
 }
 
 #content nav .names {
@@ -114,7 +114,7 @@ ul {
 }
 
 .table-view {
-    flex: 5;
+    flex: auto;
     display: flex;
     flex-direction: column;
 }
@@ -126,8 +126,9 @@ ul {
 }
 
 .review {
-    flex: 4;
+    flex: none;
     display: flex;
+    width: 480px;
     position: relative;
     flex-direction: column;
 }

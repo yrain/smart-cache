@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.google.common.base.Optional;
+import com.smart.cache.Cache.Level;
 import com.smart.util.Objects;
 
 /**
@@ -48,6 +49,7 @@ public class App {
                 if (line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("exit"))
                     break;
                 String[] cmds = line.split(" ");
+
                 // set user 1 John
                 if ("set".equalsIgnoreCase(cmds[0])) {
                     if (cmds.length <= 4) {
@@ -79,13 +81,8 @@ public class App {
                 }
                 // ttl user 1
                 else if ("ttl".equalsIgnoreCase(cmds[0])) {
-                    int ttl = cacheTemplate.ttl(cmds[1], cmds[2]);
-                    System.out.printf("ttl %s.%s=%s\n", cmds[1], cmds[2], ttl);
-                }
-                // tti user 1
-                else if ("tti".equalsIgnoreCase(cmds[0])) {
-                    int tti = cacheTemplate.tti(cmds[1], cmds[2]);
-                    System.out.printf("tti %s.%s=%s\n", cmds[1], cmds[2], tti);
+                    System.out.printf("local  ttl %s.%s=%s\n", cmds[1], cmds[2], cacheTemplate.ttl(cmds[1], cmds[2], Level.Local));
+                    System.out.printf("remote ttl %s.%s=%s\n", cmds[1], cmds[2], cacheTemplate.ttl(cmds[1], cmds[2], Level.Remote));
                 }
                 // fetch user 1
                 else if ("fetch".equalsIgnoreCase(cmds[0])) {
@@ -106,6 +103,21 @@ public class App {
                 else if ("values".equalsIgnoreCase(cmds[0])) {
                     List<String> values = cacheTemplate.values(String.valueOf(cmds[1]));
                     System.out.println(cmds[1] + ":" + Objects.toString(values));
+                }
+                // test.ttl
+                else if ("test.ttl".equalsIgnoreCase(cmds[0])) {
+                    if (cmds.length <= 1) {
+                        cacheTemplate.set("test.ttl", "test.ttl", "test.ttl");
+                    } else {
+                        cacheTemplate.set("test.ttl", "test.ttl", "test.ttl", Integer.parseInt(cmds[1]));
+                    }
+                    int i = 1;
+                    while (true) {
+                        Thread.sleep(1000);
+                        System.out.println("------------------------------------------");
+                        System.out.println(i++);
+                        System.out.println(Objects.toString(cacheTemplate.get("test.ttl", "test.ttl")));
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();

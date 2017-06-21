@@ -17,10 +17,11 @@ public class AutoLoadUserDao {
 
     public static final String KEY_USER      = "AutoLoad.User";
     public static final String KEY_USER_FIND = "AutoLoad.User_find";
+    // AutoloadCache 600秒过期
     public static final int    EXPIRE        = 600;
 
     @Autowired
-    private UserData      userData;
+    private UserData           userData;
 
     /**
      * 查询对象后并缓存

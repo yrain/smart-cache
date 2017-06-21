@@ -1,5 +1,11 @@
 package com.smart.jedis;
 
+/**
+ * Tuple
+ * -----------------------------------------------------------------------------------------------------------------------------------
+ * 
+ * @author YRain
+ */
 public class Tuple {
 
     private Object element;
