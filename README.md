@@ -273,6 +273,20 @@ cacheTemplate.values(name);// 获取name下缓存值
 </bean>
 ```
 
+
+## Redis密码配置
+
+```xml
+<bean id="jedisPool" class="redis.clients.jedis.JedisPool" destroy-method="destroy">
+	<constructor-arg index="0" ref="jedisPoolConfig" />
+	<constructor-arg index="1" value="${redis.host}" />
+	<constructor-arg index="2" value="${redis.port}" />
+	<constructor-arg index="3" value="${redis.timeout:3000}" />
+	<constructor-arg index="4" value="${redis.pass}" />
+</bean>
+```
+
+
 ## 建议咨询
 QQ:20365124
 email:yrain@live.cn
